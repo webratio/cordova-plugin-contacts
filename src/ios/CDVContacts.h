@@ -20,16 +20,19 @@
 #import <Foundation/Foundation.h>
 #import <AddressBook/ABAddressBook.h>
 #import <AddressBookUI/AddressBookUI.h>
+#import <AddressBook/ABPerson.h>
 #import <Cordova/CDVPlugin.h>
 #import "CDVContact.h"
 
 @interface CDVContacts : CDVPlugin <ABNewPersonViewControllerDelegate,
                          ABPersonViewControllerDelegate,
                          ABPeoplePickerNavigationControllerDelegate
-                         >
+                         >                         
 {
     ABAddressBookRef addressBook;
 }
+
+@property(strong) NSString* callbackId;
 
 /*
  * newContact - create a new contact via the GUI
@@ -61,7 +64,6 @@
  */
 - (void)chooseContact:(CDVInvokedUrlCommand*)command;
 
-- (void)newPersonViewController:(ABNewPersonViewController*)newPersonViewController didCompleteWithNewPerson:(ABRecordRef)person;
 - (BOOL)personViewController:(ABPersonViewController*)personViewController shouldPerformDefaultActionForPerson:(ABRecordRef)person
                     property:(ABPropertyID)property identifier:(ABMultiValueIdentifier)identifierForValue;
 /*

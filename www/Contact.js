@@ -160,8 +160,11 @@ Contact.prototype.save = function(successCB, errorCB) {
     var success = function(result) {
         if (result) {
             if (successCB) {
-                var fullContact = require('./contacts').create(result);
-                successCB(convertIn(fullContact));
+                console.log("---- CONTACT SAVED ----");
+                console.log(result);
+                //var fullContact = require('./contacts').create(result);
+                //successCB(convertIn(fullContact));
+                successCB(result);
             }
         }
         else {
