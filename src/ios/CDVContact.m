@@ -716,8 +716,8 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
 
 /* Translation of property type labels  contact API ---> iPhone
  *
- *	phone:  work, home, other, mobile, fax, pager -->
- *		kABWorkLabel, kABHomeLabel, kABOtherLabel, kABPersonPhoneMobileLabel, kABPersonHomeFAXLabel || kABPersonHomeFAXLabel, kABPersonPhonePagerLabel
+ *	phone:  work, home, other, mobile, fax, main -->
+ *		kABWorkLabel, kABHomeLabel, kABOtherLabel, kABPersonPhoneMobileLabel, kABPersonHomeFAXLabel || kABPersonHomeFAXLabel, kABPersonPhoneMainLabel
  *	emails:  work, home, other ---> kABWorkLabel, kABHomeLabel, kABOtherLabel
  *	ims: aim, gtalk, icq, xmpp, msn, skype, qq, yahoo --> kABPersonInstantMessageService + (AIM, ICG, MSN, Yahoo).  No support for gtalk, xmpp, skype, qq
  * addresses: work, home, other --> kABWorkLabel, kABHomeLabel, kABOtherLabel
@@ -734,12 +734,14 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
         type = kABWorkLabel;
     } else if ([label caseInsensitiveCompare:kW3ContactHomeLabel] == NSOrderedSame) {
         type = kABHomeLabel;
+    } else if ([label caseInsensitiveCompare:kW3ContactPhoneFaxLabel] == NSOrderedSame) {
+        type = kABPersonPhoneWorkFAXLabel;
     } else if ([label caseInsensitiveCompare:kW3ContactOtherLabel] == NSOrderedSame) {
         type = kABOtherLabel;
     } else if ([label caseInsensitiveCompare:kW3ContactPhoneMobileLabel] == NSOrderedSame) {
         type = kABPersonPhoneMobileLabel;
-    } else if ([label caseInsensitiveCompare:kW3ContactPhonePagerLabel] == NSOrderedSame) {
-        type = kABPersonPhonePagerLabel;
+    } else if ([label caseInsensitiveCompare:kW3ContactPhoneMainLabel] == NSOrderedSame) {
+        type = kABPersonPhoneMainLabel;
     } else if ([label caseInsensitiveCompare:kW3ContactImAIMLabel] == NSOrderedSame) {
         type = kABPersonInstantMessageServiceAIM;
     } else if ([label caseInsensitiveCompare:kW3ContactImICQLabel] == NSOrderedSame) {
@@ -767,8 +769,8 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
         } else if ([label isEqualToString:(NSString*)kABPersonPhoneHomeFAXLabel] ||
             [label isEqualToString:(NSString*)kABPersonPhoneWorkFAXLabel]) {
             type = kW3ContactPhoneFaxLabel;
-        } else if ([label isEqualToString:(NSString*)kABPersonPhonePagerLabel]) {
-            type = kW3ContactPhonePagerLabel;
+        } else if ([label isEqualToString:(NSString*)kABPersonPhoneMainLabel]) {
+            type = kW3ContactPhoneMainLabel;
         } else if ([label isEqualToString:(NSString*)kABHomeLabel]) {
             type = kW3ContactHomeLabel;
         } else if ([label isEqualToString:(NSString*)kABWorkLabel]) {
@@ -813,7 +815,7 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
         isValid = YES;
     } else if ([label caseInsensitiveCompare:kW3ContactPhoneMobileLabel] == NSOrderedSame) {
         isValid = YES;
-    } else if ([label caseInsensitiveCompare:kW3ContactPhonePagerLabel] == NSOrderedSame) {
+    } else if ([label caseInsensitiveCompare:kW3ContactPhoneMainLabel] == NSOrderedSame) {
         isValid = YES;
     } else if ([label caseInsensitiveCompare:kW3ContactImAIMLabel] == NSOrderedSame) {
         isValid = YES;
@@ -1075,7 +1077,7 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
 /* Create array of Dictionaries to match JavaScript ContactField object for simple multiValue properties phoneNumbers, emails
  * Input: (NSString*) W3Contact Property name
  * type
- *		for phoneNumbers type is one of (work,home,other, mobile, fax, pager)
+ *		for phoneNumbers type is one of (work,home,other, mobile, fax, main)
  *		for emails type is one of (work,home, other)
  * value - phone number or email address
  * (bool) primary (not supported on iphone)
