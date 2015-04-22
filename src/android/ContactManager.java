@@ -197,11 +197,11 @@ public class ContactManager extends CordovaPlugin {
                         ContentValues addressValues = new ContentValues();
                         addressValues.put(Data.MIMETYPE, StructuredPostal.CONTENT_ITEM_TYPE);
                         if ("home".equals(getJsonString(currentAddress, "type"))) {
-                            addressValues.put(Phone.TYPE, Phone.TYPE_HOME);
+                            addressValues.put(StructuredPostal.TYPE, StructuredPostal.TYPE_HOME);
                         } else if ("work".equals(getJsonString(currentAddress, "type"))) {
-                            addressValues.put(Phone.TYPE, Phone.TYPE_WORK);
+                            addressValues.put(StructuredPostal.TYPE, StructuredPostal.TYPE_WORK);
                         } else {
-                            addressValues.put(Phone.TYPE, Phone.TYPE_OTHER);
+                            addressValues.put(StructuredPostal.TYPE, StructuredPostal.TYPE_OTHER);
                         }
                         
                         String formattedAddress = "";
@@ -302,20 +302,14 @@ public class ContactManager extends CordovaPlugin {
                         intent.putExtra("finishActivityOnSaveCompleted", true);
                         if (name != null) {
                             String displayedName = "";
-                            if (!name.isNull("givenName")) {
-                                displayedName = displayedName + getJsonString(name, "givenName");
-                                if (!name.isNull("familyName")) {
-                                    displayedName = displayedName + " ";
-                                }
-                            }
-                            if (!name.isNull("familyName")) {
-                                displayedName = displayedName + getJsonString(name, "familyName");
-                            }
+                            displayedName = getFormattedName(name);
                             if (!"".equals(displayedName)) {
                                 intent.putExtra(Intents.Insert.NAME, displayedName);
                             }
                         }
-                        intent.putParcelableArrayListExtra(ContactsContract.Intents.Insert.DATA, data);
+                        if (!data.isEmpty()) {
+                            intent.putParcelableArrayListExtra(ContactsContract.Intents.Insert.DATA, data);
+                        }
                     }
                 }
                 if (intent == null) {
@@ -324,15 +318,7 @@ public class ContactManager extends CordovaPlugin {
                     intent.putExtra("finishActivityOnSaveCompleted", true);
                     if (name != null) {
                         String displayedName = "";
-                        if (!name.isNull("givenName")) {
-                            displayedName = displayedName + getJsonString(name, "givenName");
-                            if (!name.isNull("familyName")) {
-                                displayedName = displayedName + " ";
-                            }
-                        }
-                        if (!name.isNull("familyName")) {
-                            displayedName = displayedName + getJsonString(name, "familyName");
-                        }
+                        displayedName = getFormattedName(name);
                         if (!"".equals(displayedName)) {
                             intent.putExtra(Intents.Insert.NAME, displayedName);
                         }
@@ -457,5 +443,21 @@ public class ContactManager extends CordovaPlugin {
             Log.d(LOG_TAG, "Could not get = " + e.getMessage());
         }
         return value;
+    }
+    
+    /**
+     * @param name
+     * @return The formatted name
+     */
+    protected String getFormattedName(JSONObject name) {
+        if (!name.isNull("givenName")) {
+            if (!name.isNull("familyName")) {
+                return getJsonString(name, "givenName") + " " + getJsonString(name, "familyName");
+            }
+        }
+        if (!name.isNull("familyName")) {
+            return getJsonString(name, "familyName") + " " + getJsonString(name, "familyName");
+        }
+        return "";
     }
 }

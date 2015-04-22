@@ -160,8 +160,6 @@ Contact.prototype.save = function(successCB, errorCB) {
     var success = function(result) {
         if (result) {
             if (successCB) {
-                console.log("---- CONTACT SAVED ----");
-                console.log(result);
                 //var fullContact = require('./contacts').create(result);
                 //successCB(convertIn(fullContact));
                 successCB(result);
@@ -169,9 +167,7 @@ Contact.prototype.save = function(successCB, errorCB) {
         }
         else {
             // no Entry object returned
-            //fail(ContactError.UNKNOWN_ERROR);
-            //Necessary for emulation
-            successCB({"message": "emulation or unknown error"});
+            fail(ContactError.UNKNOWN_ERROR);
         }
     };
     var dupContact = convertOut(utils.clone(this));
