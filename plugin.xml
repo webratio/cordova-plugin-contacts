@@ -21,6 +21,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
     xmlns:rim="http://www.blackberry.com/ns/widgets"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:m3="http://schemas.microsoft.com/appx/2014/manifest"
     id="com.webratio.cordova-plugin-contacts"
     version="0.2.17.8">
 
