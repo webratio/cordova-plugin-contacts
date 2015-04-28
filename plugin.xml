@@ -22,7 +22,7 @@
     xmlns:rim="http://www.blackberry.com/ns/widgets"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="com.webratio.cordova-plugin-contacts"
-    version="0.2.17.7">
+    version="0.2.17.8">
 
     <name>Contacts</name>
     <description>Cordova Contacts Plugin</description>
