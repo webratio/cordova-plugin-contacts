@@ -258,7 +258,7 @@ function createStubs() {
                         getContactInfos(contact);
                     });
 
-                    $('#cancel').click(function(e) {
+                    $('#wr-contacts-emulator #cancel').click(function(e) {
                         var contact = {
                             "code": 0
                         };
@@ -406,7 +406,7 @@ function createStubs() {
                         getContactInfos(contact);
                     });
 
-                    $('#done').click(function(e) {
+                    $('#wr-contacts-emulator #done').click(function(e) {
                         var contact = {};
 
                         if (contactId !== undefined) {
@@ -417,7 +417,7 @@ function createStubs() {
                         getContactInfos(contact);
                     });
 
-                    $('#cancel').click(function(e) {
+                    $('#wr-contacts-emulator #cancel').click(function(e) {
                         var contact = {
                             "code": 0
                         };
