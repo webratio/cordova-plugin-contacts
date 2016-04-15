@@ -160,14 +160,12 @@ Contact.prototype.save = function(successCB, errorCB) {
     var success = function(result) {
         if (result) {
             if (successCB) {
-                console.log("---- CONTACT SAVED ----");
-                console.log(result);
                 successCB(result);
             }
         }
         else {
-            //Necessary for emulation
-            successCB({"message": "emulation or unknown error"});
+            // no Entry object returned
+            fail(ContactError.UNKNOWN_ERROR);
         }
     };
     var dupContact = convertOut(utils.clone(this));

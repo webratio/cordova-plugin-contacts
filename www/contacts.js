@@ -71,11 +71,6 @@ var contacts = {
             
             var contact = {};
             
-            if (result === undefined) {
-                //Emulation
-                result = {};
-            }
-            
             if (result.code === 0) {
                 contact = result;
             } else {
