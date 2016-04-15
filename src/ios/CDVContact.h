@@ -91,6 +91,7 @@ typedef NSUInteger CDVContactError;
 #define kW3ContactHomeLabel @"home"
 #define kW3ContactOtherLabel @"other"
 #define kW3ContactPhoneFaxLabel @"fax"
+#define kW3ContactPhoneMainLabel @"main"
 #define kW3ContactPhoneMobileLabel @"mobile"
 #define kW3ContactPhonePagerLabel @"pager"
 #define kW3ContactUrlBlog @"blog"

@@ -166,8 +166,8 @@ Contact.prototype.save = function(successCB, errorCB) {
             }
         }
         else {
-            // no Entry object returned
-            fail(ContactError.UNKNOWN_ERROR);
+            //Necessary for emulation
+            successCB({"message": "emulation or unknown error"});
         }
     };
     var dupContact = convertOut(utils.clone(this));

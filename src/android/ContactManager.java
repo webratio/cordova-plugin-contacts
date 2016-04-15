@@ -255,8 +255,14 @@ public class ContactManager extends CordovaPlugin {
                             phoneValues.put(Phone.TYPE, Phone.TYPE_HOME);
                         } else if ("work".equals(getJsonString(currentPhone, "type"))) {
                             phoneValues.put(Phone.TYPE, Phone.TYPE_WORK);
-                        } else {
+                        } else if ("mobile".equals(getJsonString(currentPhone, "type"))) {
                             phoneValues.put(Phone.TYPE, Phone.TYPE_MOBILE);
+                        } else if ("fax".equals(getJsonString(currentPhone, "type"))) {
+                            phoneValues.put(Phone.TYPE, Phone.TYPE_FAX_WORK);
+                        } else if ("main".equals(getJsonString(currentPhone, "type"))) {
+                            phoneValues.put(Phone.TYPE, Phone.TYPE_MAIN);
+                        } else {
+                            phoneValues.put(Phone.TYPE, Phone.TYPE_OTHER);
                         }
                         phoneValues.put(Phone.NUMBER, getJsonString(currentPhone, "value"));
                         data.add(phoneValues);
@@ -278,6 +284,8 @@ public class ContactManager extends CordovaPlugin {
                             emailValues.put(Email.TYPE, Email.TYPE_HOME);
                         } else if ("work".equals(getJsonString(currentEmail, "type"))) {
                             emailValues.put(Email.TYPE, Email.TYPE_WORK);
+                        } else {
+                            emailValues.put(Email.TYPE, Email.TYPE_OTHER);
                         }
                         emailValues.put(Email.ADDRESS, getJsonString(currentEmail, "value"));
                         data.add(emailValues);

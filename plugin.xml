@@ -22,7 +22,7 @@
     xmlns:rim="http://www.blackberry.com/ns/widgets"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="com.webratio.cordova.contacts"
-    version="0.2.17.4">
+    version="0.2.17.5">
 
     <name>Contacts</name>
     <description>Cordova Contacts Plugin</description>
@@ -123,6 +123,52 @@
                 <param name="ios-package" value="CDVContacts"/>
             </feature>
         </config-file>
+        
+        <config-file target="*-Info.plist" parent="CFBundleLocalizations">
+    		<array>
+		        <string>en</string>
+				<string>en-GB</string>
+				<string>en-AU</string>
+				<string>en-CA</string>
+				<string>en-IN</string>
+				<string>fr</string>
+				<string>fr-CA</string>
+				<string>es</string>
+				<string>es-MX</string>
+				<string>pt</string>
+				<string>pt-BR</string>
+				<string>it</string>
+				<string>de</string>
+				<string>zh-Hans</string>
+				<string>zh-Hant</string>
+				<string>zh-HK</string>
+				<string>nl</string>
+				<string>ja</string>
+				<string>ko</string>
+				<string>vi</string>
+				<string>ru</string>
+				<string>sv</string>
+				<string>da</string>
+				<string>fi</string>
+				<string>nb</string>
+				<string>tr</string>
+				<string>el</string>
+				<string>id</string>
+				<string>ms</string>
+				<string>th</string>
+				<string>hi</string>
+				<string>hu</string>
+				<string>pl</string>
+				<string>cs</string>
+				<string>sk</string>
+				<string>uk</string>
+				<string>hr</string>
+				<string>ca</string>
+				<string>ro</string>
+				<string>he</string>
+				<string>ar</string>
+    		</array>
+		</config-file>
 
         <js-module src="www/ios/contacts.js" name="contacts-ios">
             <merges target="navigator.contacts" />
