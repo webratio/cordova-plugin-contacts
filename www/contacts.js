@@ -68,21 +68,18 @@ var contacts = {
         argscheck.checkArgs('fF', 'contacts.pick', arguments);
 
         var win = function (result) {
-            var platform = device.platform;
+            
             var contact = {};
             
-            if (platform === "Android") {
-                if (result.code === 0) {
-                    contact = result;
-                } else {
-                    contact = result instanceof Contact ? result : contacts.create(result);
-                }
+            if (result === undefined) {
+                //Emulation
+                result = {};
+            }
+            
+            if (result.code === 0) {
+                contact = result;
             } else {
-                if (result.code === 0) {
-                    contact = result;
-                } else {
-                    contact = result instanceof Contact ? result : contacts.create(result);
-                }
+                contact = result instanceof Contact ? result : contacts.create(result);
             }
             successCB(contact);
         };
