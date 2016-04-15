@@ -63,37 +63,35 @@ function createStubs() {
             "type": "other",
             "value": "orci@eget.co.uk"
         } ]
-    }
+    };
 
     function initPick() {
 
         $('#wr-contacts-emulator').remove();
 
         $('#platform-events-fire-back').css("display", "none");
-        $('#platform-events-fire-suspend')
-                .before(
-                        "<button id=\"platform-events-fire-back-contacts\" class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\"><span class=\"ui-button-text\">Back</span></button>");
-        $('#platform-events-fire-back-contacts').css("width", "90px");
+        $('#platform-events-fire-suspend').before("<button id=\"platform-events-fire-back-contacts\">Back</button>");
+        $('#platform-events-fire-back-contacts').button().css("width", "90px");
 
-        var liIndex = "<li style=\"border: solid #3498db 2px; border-left: 0; border-right: 0; border-top: 0; color: #3498db; font-size: 1.3em; padding: 5% 0 5% 5%; \">";
-        var liName = "<li style=\"cursor: pointer; padding: 5% 0 5% 5%; \"";
-        var liMultiName = "<li style=\"cursor: pointer; padding: 5% 0 5% 5%; border: solid #E6E6E6 1px; border-left: 0; border-right: 0; border-top: 0;\"";
+        var liIndex = "<li style=\"  border-bottom: solid #000 2px; padding: 10px; font-weight: 70\">";
+        var liName = "<li style=\"cursor: pointer; padding: 10px; \"";
+        // var liMultiName = "<li style=\"cursor: pointer; padding: 5% 0 5% 5%; border: solid #E6E6E6 1px; border-left: 0;
+        // border-right: 0; border-top: 0;\"";
         var pickContactsTemplate = [
                 "<section id=\"wr-contacts-emulator\" style=\"display:none; background: rgba(0, 0, 0, 0); position: absolute; width: 100%; height: 100%; z-index: 10000;\">",
                 "<div style=\"background: #fff; height: 100%; width: 100%; overflow: auto; \">",
-                "<div id=\"wr-contacts-title\" style=\"background: #3498db; font-size: 1em; color: #fff; font-weight: bold; line-height: 3em;\">",
-                "<ul style=\"list-style-type: none; margin: 0; padding: 0; \">",
-                "<li id=\"cancel\" style=\"display: inline-block; cursor: pointer; padding: 0 10% 0 3%; \">CANCEL</li>",
-                "<li style=\"display: inline-block; color: #E6E6E6; \">Find contacts</li>", "</ul>",
-                "</div><ul style=\"width: 90%; color: #000; font-size: 1.0em; list-style-type: none; padding: 0 0 0 5%; \">", liIndex,
-                "C</li>", liName, "id=\"wr-contact-castor-villarreal\">", "Castor Villarreal</li>", liIndex, "E</li>", liMultiName,
-                "id=\"wr-contact-castor-villarreal\">", "Eaton Hogan</li>", liName, "id=\"wr-contact-erich-davis\">",
-                "Erich Davis</li>", liIndex, "G</li>", liName, "id=\"wr-contact-gail-gilmore\">", "Gail Gilmore</li>", liIndex,
-                "J</li>", liName, "id=\"wr-contact-jael-wade\">", "Jael Wade</li>", liName, "id=\"wr-contact-joshua-william\">",
-                "Joshua William</li>", liName, "id=\"wr-contact-juliet-kaufman\">", "Juliet Kaufman</li>", liIndex, "K</li>",
-                liMultiName, "id=\"wr-contact-kieran-bridges\">", "Kieran Bridges</li>", liName, "id=\"wr-contact-kimberly-nolan\">",
+                "<div id=\"wr-contacts-title\" style=\"background: #000; font-size: 1em; color: #fff; font-weight: bold; line-height: 44px;padding: 0 10px;position: absolute;top: 0;left: 0;right: 0;\">",
+                "<div style=\"display: inline-block; color: #E6E6E6; \">Find contacts</div>",
+                "<div id=\"cancel\" style=\" cursor: pointer;  float: right;\">CANCEL</div>", "</div>",
+                "<ul style=\"color: #000; list-style-type: none; padding: 0; margin: 44px 0;\">", liIndex, "C</li>", liName,
+                "id=\"wr-contact-castor-villarreal\">", "Castor Villarreal</li>", liIndex, "E</li>", liName,
+                "id=\"wr-contact-eaton-hogan\">", "Eaton Hogan</li>", liName, "id=\"wr-contact-erich-davis\">", "Erich Davis</li>",
+                liIndex, "G</li>", liName, "id=\"wr-contact-gail-gilmore\">", "Gail Gilmore</li>", liIndex, "J</li>", liName,
+                "id=\"wr-contact-jael-wade\">", "Jael Wade</li>", liName, "id=\"wr-contact-joshua-william\">", "Joshua William</li>",
+                liName, "id=\"wr-contact-juliet-kaufman\">", "Juliet Kaufman</li>", liIndex, "K</li>", liName,
+                "id=\"wr-contact-kieran-bridges\">", "Kieran Bridges</li>", liName, "id=\"wr-contact-kimberly-nolan\">",
                 "Kimberly Nolan</li>", liIndex, "L</li>", liName, "id=\"wr-contact-lael-jordan\">", "Lael Jordan</li>", liIndex,
-                "M</li>", liMultiName, "id=\"wr-contact-micah-mclaughlin\">", "Micah Mclaughlin</li>", liName,
+                "M</li>", liName, "id=\"wr-contact-micah-mclaughlin\">", "Micah Mclaughlin</li>", liName,
                 "id=\"wr-contact-mia-schneider\">", "Mia Schneider</li>", liIndex, "P</li>", liName, "id=\"wr-contact-philip-yang\">",
                 "Philip Yang</li>", liIndex, "S</li>", liName, "id=\"wr-contact-sonia-branch\">", "Sonia Branch</li>", liIndex,
                 "V</li>", liName, "id=\"wr-contact-vladimir-burns\">", "Vladimir Burns</li>", "</div>", "</section>" ].join("\n");
@@ -108,21 +106,16 @@ function createStubs() {
         $('#wr-contacts-emulator').remove();
 
         $('#platform-events-fire-back').css("display", "none");
-        $('#platform-events-fire-suspend')
-                .before(
-                        "<button id=\"platform-events-fire-back-contacts\" class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\"><span class=\"ui-button-text\">Back</span></button>");
-        $('#platform-events-fire-back-contacts').css("width", "90px");
+        $('#platform-events-fire-suspend').before("<button id=\"platform-events-fire-back-contacts\">Back</button>");
+        $('#platform-events-fire-back-contacts').button().css("width", "90px");
 
         var saveContactsTemplate = [
                 "<section id=\"wr-contacts-emulator\" style=\"background: #fff; display:none; position: absolute; width: 100%; height: 100%; z-index: 10000; \">",
-                // "<div id=\"wr-contacts-container\" style=\"position:absolute; width: 100%, height: 100%; background: #fff; overflow:
-                // auto; \">",
                 "<div style=\"background: #fff; height: 100%; width: 100%; overflow: auto;\">",
-                "<div id=\"wr-contacts-title\" style=\"width: 100%; background: #3498db; font-size: 1em; color: #fff; text-align: left; font-weight: bold; line-height: 2.5em;\">",
-                "<ul style=\"list-style-type: none; margin: 0; padding: 5px; \">",
-                "<li id=\"done\" style=\"display: inline-block; margin-left:5%; cursor: pointer; \">DONE</li>",
-                "<li id=\"cancel\" style=\"display: inline-block; margin-right:5%; cursor: pointer; float: right; \">CANCEL</li>",
-                "</ul>", "</div>", "<div id=\"wr-contacts-fields\" style=\"width: 100%; font-size: 0.8em \"></div>", "</div>",
+                "<div id=\"wr-contacts-title\" style=\"background: #000; font-size: 1em; color: #fff; font-weight: bold; line-height: 44px;padding: 0 10px;position: absolute;top: 0;left: 0;right: 0;\">",
+                "<div id=\"done\" style=\"display: inline-block; cursor: pointer; \">DONE</div>",
+                "<div id=\"cancel\" style=\" cursor: pointer;  float: right;\">CANCEL</div>", "</div>",
+                "<div id=\"wr-contacts-fields\" style=\"width: 100%; font-size: 0.8em; margin: 54px 0;\"></div>", "</div>",
                 "</section>" ].join("\n");
 
         var saveContacts = $(saveContactsTemplate);
@@ -133,8 +126,8 @@ function createStubs() {
 
         /* Create Name field */
         elem = [
-                "<table id=\"contacts-name\" style=\"table-layout: fixed; width: 95%; border-spacing: 0.5em; \">",
-                "<caption style=\"color: #3498db; padding: 5% 0 0 5%; text-align: left; font-weight: bold; font-size: 1em; border-bottom: 1px solid #3498db; \">",
+                "<table id=\"contacts-name\" style=\"table-layout: fixed; width: 100%; border-spacing: 10px; margin-bottom: 5px; \">",
+                "<caption style=\"padding: 5px 10px; text-align: left; font-weight: bold;  border-bottom: 1px solid #ccc;  \">",
                 "NAME", "</caption>", "</table>" ].join("\n");
 
         $('#wr-contacts-fields').append($(elem));
@@ -151,10 +144,9 @@ function createStubs() {
             }
         }
 
-        elem = [
-                "<tr style=\"width: 100%;\">",
-                "<td id=\"contact-name-value\" style=\"width: 70%; border: 1px solid #BDBDBD; font-size: 1.2em; overflow: hidden; text-overflow: ellipsis; \">",
-                name, "</td>", "</tr>" ].join("\n");
+        elem = [ "<tr style=\"width: 100%;\">",
+                "<td id=\"contact-name-value\" style=\"width: 70%; overflow: hidden; text-overflow: ellipsis; \">", name, "</td>",
+                "</tr>" ].join("\n");
 
         $('#contacts-name').append($(elem));
 
@@ -165,80 +157,71 @@ function createStubs() {
 
         /* Create Phone Numbers fields */
         elem = [
-                "<table id=\"contacts-phones\" style=\"table-layout: fixed; width: 95%; border-spacing: 0.5em; \">",
-                "<caption style=\"color: #3498db; padding: 5% 0 0 5%; text-align: left; font-weight: bold; font-size: 1em; border-bottom: 1px solid #3498db; \">",
+                "<table id=\"contacts-phones\" style=\"table-layout: fixed; width: 100%; border-spacing: 10px; margin-bottom: 5px; \">",
+                "<caption style=\"padding: 5px 10px; text-align: left; font-weight: bold;  border-bottom: 1px solid #ccc;  \">",
                 "PHONE", "</caption>", "</table>" ].join("\n");
 
         $('#wr-contacts-fields').append($(elem));
 
         if (contact.phoneNumbers) {
             for (obj in contact.phoneNumbers) {
-                elem = [
-                        "<tr style=\"width: 100%;\">",
-                        "<td style=\"width: 15%; border-bottom: 1px solid #3498db; \">",
-                        contact.phoneNumbers[obj].type.toUpperCase(),
-                        "</td>",
-                        "<td style=\"width: 70%; border: 1px solid #BDBDBD; font-size: 1.2em; overflow: hidden; text-overflow: ellipsis; \">",
-                        contact.phoneNumbers[obj].value, "</td>", "</tr>" ].join("\n");
+                elem = [ "<tr style=\"width: 100%;\">", "<td style=\"width: 15%; color: #888; \">",
+                        contact.phoneNumbers[obj].type.toUpperCase(), "</td>",
+                        "<td style=\"width: 70%; overflow: hidden; text-overflow: ellipsis; \">", contact.phoneNumbers[obj].value,
+                        "</td>", "</tr>" ].join("\n");
                 $('#contacts-phones').append($(elem));
             }
         } else {
             elem = [
                     "<tr style=\"width: 100%;\">",
-                    "<td style=\"width: 15%; border-bottom: 1px solid #3498db; color: #BDBDBD; \">",
+                    "<td style=\"width: 15%; color: #888; \">",
                     "TYPE",
                     "</td>",
-                    "<td id=\"contact-empty-elem\" style=\"width: 70%; border: 1px solid #BDBDBD; font-size: 1.2em; overflow: hidden; text-overflow: ellipsis; color: #BDBDBD; \">",
+                    "<td id=\"contact-empty-elem\" style=\"width: 70%; overflow: hidden; text-overflow: ellipsis; color: #BDBDBD; \">",
                     "Number", "</td>", "</tr>" ].join("\n");
             $('#contacts-phones').append($(elem));
         }
 
         /* Create Emails fields */
         elem = [
-                "<table id=\"contacts-emails\" style=\"table-layout: fixed; width: 95%; border-spacing: 0.5em; \">",
-                "<caption style=\"color: #3498db; padding: 5% 0 0 5%; text-align: left; font-weight: bold; font-size: 1em; border-bottom: 1px solid #3498db; \">",
+                "<table id=\"contacts-emails\" style=\"table-layout: fixed; width: 100%; border-spacing: 10px; margin-bottom: 5px; \">",
+                "<caption style=\"padding: 5px 10px; text-align: left; font-weight: bold;  border-bottom: 1px solid #ccc;  \">",
                 "EMAIL", "</caption>", "</table>" ].join("\n");
 
         $('#wr-contacts-fields').append($(elem));
 
         if (contact.emails) {
             for (obj in contact.emails) {
-                elem = [
-                        "<tr style=\"width: 100%;\">",
-                        "<td style=\"width: 15%; border-bottom: 1px solid #3498db; \">",
-                        contact.emails[obj].type.toUpperCase(),
-                        "</td>",
-                        "<td style=\"width: 70%; border: 1px solid #BDBDBD; font-size: 1.2em; overflow: hidden; text-overflow: ellipsis; \">",
-                        contact.emails[obj].value, "</td>", "</tr>" ].join("\n");
+                elem = [ "<tr style=\"width: 100%;\">", "<td style=\"width: 15%; color: #888; \">",
+                        contact.emails[obj].type.toUpperCase(), "</td>",
+                        "<td style=\"width: 70%; overflow: hidden; text-overflow: ellipsis; \">", contact.emails[obj].value, "</td>",
+                        "</tr>" ].join("\n");
                 $('#contacts-emails').append($(elem));
             }
         } else {
             elem = [
                     "<tr style=\"width: 100%;\">",
-                    "<td style=\"width: 15%; border-bottom: 1px solid #3498db; color: #BDBDBD; \">",
+                    "<td style=\"width: 15%; color: #888; \">",
                     "TYPE",
                     "</td>",
-                    "<td id=\"contact-empty-elem\" style=\"width: 70%; border: 1px solid #BDBDBD; font-size: 1.2em; overflow: hidden; text-overflow: ellipsis; color: #BDBDBD; \">",
+                    "<td id=\"contact-empty-elem\" style=\"width: 70%; overflow: hidden; text-overflow: ellipsis; color: #BDBDBD; \">",
                     "Email", "</td>", "</tr>" ].join("\n");
             $('#contacts-emails').append($(elem));
         }
 
         /* Create Addresses fields */
         elem = [
-                "<table id=\"contacts-addresses\" style=\"table-layout: fixed; width: 95%; border-spacing: 0.5em; \">",
-                "<caption style=\"color: #3498db; padding: 5% 0 0 5%; text-align: left; font-weight: bold; font-size: 1em; border-bottom: 1px solid #3498db; \">",
+                "<table id=\"contacts-addresses\" style=\"table-layout: fixed; width: 100%; border-spacing: 10px; margin-bottom: 5px; \">",
+                "<caption style=\"padding: 5px 10px; text-align: left; font-weight: bold;  border-bottom: 1px solid #ccc;  \">",
                 "ADDRESS", "</caption>", "</table>" ].join("\n");
 
         $('#wr-contacts-fields').append($(elem));
 
         if (contact.addresses) {
             for (obj in contact.addresses) {
-                elem = [
-                        "<tr style=\"width: 100%;\">",
-                        "<td style=\"width: 15%; border-bottom: 1px solid #3498db; \">",
-                        contact.addresses[obj].type.toUpperCase(),
-                        "</td>",
-                        "<td style=\"width: 70%; border: 1px solid #BDBDBD; font-size: 1.2em; overflow: hidden; text-overflow: ellipsis; \">",
+                elem = [ "<tr style=\"width: 100%;\">", "<td style=\"width: 15%; color: #888; \">",
+                        contact.addresses[obj].type.toUpperCase(), "</td>",
+                        "<td style=\"width: 70%; overflow: hidden; text-overflow: ellipsis; \">",
                         "<ul style=\"list-style-type: none; margin: 0; padding: 5px; \">", "<li>",
                         contact.addresses[obj].streetAddress, "</li>", "<li>", contact.addresses[obj].locality, "</li>", "<li>",
                         contact.addresses[obj].postalCode, "</li>", "<li>", contact.addresses[obj].country, "</li>", "</ul>", "</td>",
@@ -249,10 +232,10 @@ function createStubs() {
         } else {
             elem = [
                     "<tr style=\"width: 100%;\">",
-                    "<td style=\"width: 15%; border-bottom: 1px solid #3498db; color: #BDBDBD; \">",
+                    "<td style=\"width: 15%; color: #888; \">",
                     "TYPE",
                     "</td>",
-                    "<td id=\"contact-empty-elem\" style=\"width: 70%; border: 1px solid #BDBDBD; font-size: 1.2em; overflow: hidden; text-overflow: ellipsis; color: #BDBDBD; \">",
+                    "<td id=\"contact-empty-elem\" style=\"width: 70%; overflow: hidden; text-overflow: ellipsis; color: #BDBDBD; \">",
                     "Address", "</td>", "</tr>" ].join("\n");
             $('#contacts-addresses').append($(elem));
         }
@@ -271,7 +254,7 @@ function createStubs() {
                             "code": 0
                         };
                         $('#platform-events-fire-back-contacts').remove();
-                        $('#platform-events-fire-back').css("display", "initial");
+                        $('#platform-events-fire-back').css("display", "");
                         getContactInfos(contact);
                     });
 
@@ -298,7 +281,6 @@ function createStubs() {
 
                     $('#wr-contact-kimberly-nolan').click(function(e) {
                         e.preventDefault();
-                        alert("click");
                         fakeContact.name.givenName = "Kimberly";
                         fakeContact.name.familyName = "Nolan";
                         getContactInfos(fakeContact);
@@ -390,15 +372,15 @@ function createStubs() {
 
                     function getContactInfos(contact) {
                         $('#platform-events-fire-back-contacts').remove();
-                        $('#platform-events-fire-back').css("display", "initial");
+                        $('#platform-events-fire-back').css("display", "");
                         contacts.hide('slide', {
-                            direction: 'left',
+                            direction: 'down',
                             duration: 250
                         });
                         resolve(contact);
                     }
                     contacts.show('slide', {
-                        direction: 'right',
+                        direction: 'down',
                         duration: 250
                     });
                 })
@@ -420,7 +402,7 @@ function createStubs() {
                             "code": 0
                         };
                         $('#platform-events-fire-back-contacts').remove();
-                        $('#platform-events-fire-back').css("display", "initial");
+                        $('#platform-events-fire-back').css("display", "");
                         getContactInfos(contact);
                     });
 
@@ -443,15 +425,15 @@ function createStubs() {
                     });
                     function getContactInfos(contact) {
                         $('#platform-events-fire-back-contacts').remove();
-                        $('#platform-events-fire-back').css("display", "initial");
+                        $('#platform-events-fire-back').css("display", "");
                         contacts.hide('slide', {
-                            direction: 'left',
+                            direction: 'down',
                             duration: 250
                         });
                         resolve(contact);
                     }
                     contacts.show('slide', {
-                        direction: 'right',
+                        direction: 'down',
                         duration: 250
                     });
                 })
