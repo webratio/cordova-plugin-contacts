@@ -160,7 +160,8 @@ Contact.prototype.save = function(successCB, errorCB) {
     var success = function(result) {
         if (result) {
             if (successCB) {
-                successCB(result);
+                var fullContact = require('./contacts').create(result);
+                successCB(convertIn(fullContact));
             }
         }
         else {

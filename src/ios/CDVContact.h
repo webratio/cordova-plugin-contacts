@@ -28,6 +28,7 @@ enum CDVContactError {
     PENDING_OPERATION_ERROR = 3,
     IO_ERROR = 4,
     NOT_SUPPORTED_ERROR = 5,
+    OPERATION_CANCELLED_ERROR = 6,
     PERMISSION_DENIED_ERROR = 20
 };
 typedef NSUInteger CDVContactError;
@@ -91,7 +92,6 @@ typedef NSUInteger CDVContactError;
 #define kW3ContactHomeLabel @"home"
 #define kW3ContactOtherLabel @"other"
 #define kW3ContactPhoneFaxLabel @"fax"
-#define kW3ContactPhoneMainLabel @"main"
 #define kW3ContactPhoneMobileLabel @"mobile"
 #define kW3ContactPhonePagerLabel @"pager"
 #define kW3ContactUrlBlog @"blog"

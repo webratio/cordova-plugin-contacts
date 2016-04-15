@@ -68,14 +68,9 @@ var contacts = {
         argscheck.checkArgs('fF', 'contacts.pick', arguments);
 
         var win = function (result) {
-            
-            var contact = {};
-            
-            if (result.code === 0) {
-                contact = result;
-            } else {
-                contact = result instanceof Contact ? result : contacts.create(result);
-            }
+            // if Contacts.pickContact return instance of Contact object
+            // don't create new Contact object, use current
+            var contact = result instanceof Contact ? result : contacts.create(result);
             successCB(contact);
         };
         exec(win, errorCB, "Contacts", "pickContact", []);

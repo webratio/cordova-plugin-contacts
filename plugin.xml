@@ -22,8 +22,9 @@
     xmlns:rim="http://www.blackberry.com/ns/widgets"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:m3="http://schemas.microsoft.com/appx/2014/manifest"
-    id="com.webratio.cordova.contacts"
-    version="0.2.17.9">
+    xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+    id="cordova-plugin-contacts"
+    version="2.0.1.1wr">
 
     <name>Contacts</name>
     <description>Cordova Contacts Plugin</description>
@@ -85,6 +86,7 @@
         <source-file src="src/android/ContactAccessorSdk5.java" target-dir="src/org/apache/cordova/contacts" />
         <source-file src="src/android/ContactManager.java" target-dir="src/org/apache/cordova/contacts" />
         <source-file src="src/android/ContactInfoDTO.java" target-dir="src/org/apache/cordova/contacts" />
+        <source-file src="src/android/PermissionHelper.java" target-dir="src/org/apache/cordova/contacts" />
     </platform>
 
     <!-- amazon-fireos -->
@@ -105,7 +107,7 @@
         <source-file src="src/android/ContactAccessorSdk5.java" target-dir="src/org/apache/cordova/contacts" />
         <source-file src="src/android/ContactManager.java" target-dir="src/org/apache/cordova/contacts" />
     </platform>
-    
+
     <!-- ubuntu -->
     <platform name="ubuntu">
         <config-file target="config.xml" parent="/*">
@@ -124,52 +126,6 @@
                 <param name="ios-package" value="CDVContacts"/>
             </feature>
         </config-file>
-        
-        <config-file target="*-Info.plist" parent="CFBundleLocalizations">
-    		<array>
-		        <string>en</string>
-				<string>en-GB</string>
-				<string>en-AU</string>
-				<string>en-CA</string>
-				<string>en-IN</string>
-				<string>fr</string>
-				<string>fr-CA</string>
-				<string>es</string>
-				<string>es-MX</string>
-				<string>pt</string>
-				<string>pt-BR</string>
-				<string>it</string>
-				<string>de</string>
-				<string>zh-Hans</string>
-				<string>zh-Hant</string>
-				<string>zh-HK</string>
-				<string>nl</string>
-				<string>ja</string>
-				<string>ko</string>
-				<string>vi</string>
-				<string>ru</string>
-				<string>sv</string>
-				<string>da</string>
-				<string>fi</string>
-				<string>nb</string>
-				<string>tr</string>
-				<string>el</string>
-				<string>id</string>
-				<string>ms</string>
-				<string>th</string>
-				<string>hi</string>
-				<string>hu</string>
-				<string>pl</string>
-				<string>cs</string>
-				<string>sk</string>
-				<string>uk</string>
-				<string>hr</string>
-				<string>ca</string>
-				<string>ro</string>
-				<string>he</string>
-				<string>ar</string>
-    		</array>
-		</config-file>
 
         <js-module src="www/ios/contacts.js" name="contacts-ios">
             <merges target="navigator.contacts" />
@@ -213,21 +169,6 @@
         <dependency id="com.blackberry.pim.lib" />
     </platform>
 
-    <!-- wp7 -->
-    <platform name="wp7">
-        <config-file target="config.xml" parent="/*">
-            <feature name="Contacts">
-                <param name="wp-package" value="Contacts"/>
-            </feature>
-        </config-file>
-
-        <config-file target="Properties/WMAppManifest.xml" parent="/Deployment/App/Capabilities">
-            <Capability Name="ID_CAP_CONTACTS" />
-        </config-file>
-
-        <source-file src="src/wp/Contacts.cs" />
-        <source-file src="src/wp/ContactsHelper.cs" />
-    </platform>
 
     <!-- wp8 -->
     <platform name="wp8">
@@ -247,7 +188,7 @@
         <source-file src="src/wp/ContactPicker.xaml.cs" />
         <source-file src="src/wp/ContactPickerTask.cs" />
     </platform>
-    
+
     <!-- firefoxos -->
     <platform name="firefoxos">
         <config-file target="config.xml" parent="/*">
@@ -257,7 +198,7 @@
         <js-module src="src/firefoxos/ContactsProxy.js" name="ContactsProxy">
             <runs />
         </js-module>
-    </platform>    
+    </platform>
 
     <!-- Windows 8 -->
     <platform name="windows8">
@@ -273,6 +214,9 @@
         </js-module>
         <config-file target="package.phone.appxmanifest" parent="/Package/Capabilities">
             <m3:Capability Name="contacts" />
+        </config-file>
+        <config-file target="package.appxmanifest" parent="/Package/Capabilities" versions=">=10.0.0">
+            <uap:Capability Name="contacts" />
         </config-file>
     </platform>
 

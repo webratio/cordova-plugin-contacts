@@ -18,7 +18,6 @@
  */
 
 #import "CDVContact.h"
-#import <Cordova/NSDictionary+Extensions.h>
 
 #define DATE_OR_NULL(dateObj) ((aDate != nil) ? (id)([aDate descriptionWithLocale:[NSLocale currentLocale]]) : (id)([NSNull null]))
 #define IS_VALID_VALUE(value) ((value != nil) && (![value isKindOfClass:[NSNull class]]))
@@ -716,8 +715,8 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
 
 /* Translation of property type labels  contact API ---> iPhone
  *
- *	phone:  work, home, other, mobile, fax, main -->
- *		kABWorkLabel, kABHomeLabel, kABOtherLabel, kABPersonPhoneMobileLabel, kABPersonHomeFAXLabel || kABPersonHomeFAXLabel, kABPersonPhoneMainLabel
+ *	phone:  work, home, other, mobile, fax, pager -->
+ *		kABWorkLabel, kABHomeLabel, kABOtherLabel, kABPersonPhoneMobileLabel, kABPersonHomeFAXLabel || kABPersonHomeFAXLabel, kABPersonPhonePagerLabel
  *	emails:  work, home, other ---> kABWorkLabel, kABHomeLabel, kABOtherLabel
  *	ims: aim, gtalk, icq, xmpp, msn, skype, qq, yahoo --> kABPersonInstantMessageService + (AIM, ICG, MSN, Yahoo).  No support for gtalk, xmpp, skype, qq
  * addresses: work, home, other --> kABWorkLabel, kABHomeLabel, kABOtherLabel
@@ -734,14 +733,12 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
         type = kABWorkLabel;
     } else if ([label caseInsensitiveCompare:kW3ContactHomeLabel] == NSOrderedSame) {
         type = kABHomeLabel;
-    } else if ([label caseInsensitiveCompare:kW3ContactPhoneFaxLabel] == NSOrderedSame) {
-        type = kABPersonPhoneWorkFAXLabel;
     } else if ([label caseInsensitiveCompare:kW3ContactOtherLabel] == NSOrderedSame) {
         type = kABOtherLabel;
     } else if ([label caseInsensitiveCompare:kW3ContactPhoneMobileLabel] == NSOrderedSame) {
         type = kABPersonPhoneMobileLabel;
-    } else if ([label caseInsensitiveCompare:kW3ContactPhoneMainLabel] == NSOrderedSame) {
-        type = kABPersonPhoneMainLabel;
+    } else if ([label caseInsensitiveCompare:kW3ContactPhonePagerLabel] == NSOrderedSame) {
+        type = kABPersonPhonePagerLabel;
     } else if ([label caseInsensitiveCompare:kW3ContactImAIMLabel] == NSOrderedSame) {
         type = kABPersonInstantMessageServiceAIM;
     } else if ([label caseInsensitiveCompare:kW3ContactImICQLabel] == NSOrderedSame) {
@@ -753,7 +750,9 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
     } else if ([label caseInsensitiveCompare:kW3ContactUrlProfile] == NSOrderedSame) {
         type = kABPersonHomePageLabel;
     } else {
-        type = kABOtherLabel;
+        // CB-3950 If label is not one of kW3*Label constants, threat it as custom label,
+        // otherwise fetching contact and then saving it will break this label in address book.
+        type = (__bridge CFStringRef)(label);
     }
 
     return type;
@@ -769,8 +768,8 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
         } else if ([label isEqualToString:(NSString*)kABPersonPhoneHomeFAXLabel] ||
             [label isEqualToString:(NSString*)kABPersonPhoneWorkFAXLabel]) {
             type = kW3ContactPhoneFaxLabel;
-        } else if ([label isEqualToString:(NSString*)kABPersonPhoneMainLabel]) {
-            type = kW3ContactPhoneMainLabel;
+        } else if ([label isEqualToString:(NSString*)kABPersonPhonePagerLabel]) {
+            type = kW3ContactPhonePagerLabel;
         } else if ([label isEqualToString:(NSString*)kABHomeLabel]) {
             type = kW3ContactHomeLabel;
         } else if ([label isEqualToString:(NSString*)kABWorkLabel]) {
@@ -790,7 +789,9 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
         } else if ([label isEqualToString:(NSString*)kABPersonHomePageLabel]) {
             type = kW3ContactUrlProfile;
         } else {
-            type = kW3ContactOtherLabel;
+            // CB-3950 If label is not one of kW3*Label constants, threat it as custom label,
+            // otherwise fetching contact and then saving it will break this label in address book.
+            type = label;
         }
     }
     return type;
@@ -815,7 +816,7 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
         isValid = YES;
     } else if ([label caseInsensitiveCompare:kW3ContactPhoneMobileLabel] == NSOrderedSame) {
         isValid = YES;
-    } else if ([label caseInsensitiveCompare:kW3ContactPhoneMainLabel] == NSOrderedSame) {
+    } else if ([label caseInsensitiveCompare:kW3ContactPhonePagerLabel] == NSOrderedSame) {
         isValid = YES;
     } else if ([label caseInsensitiveCompare:kW3ContactImAIMLabel] == NSOrderedSame) {
         isValid = YES;
@@ -1077,7 +1078,7 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
 /* Create array of Dictionaries to match JavaScript ContactField object for simple multiValue properties phoneNumbers, emails
  * Input: (NSString*) W3Contact Property name
  * type
- *		for phoneNumbers type is one of (work,home,other, mobile, fax, main)
+ *		for phoneNumbers type is one of (work,home,other, mobile, fax, pager)
  *		for emails type is one of (work,home, other)
  * value - phone number or email address
  * (bool) primary (not supported on iphone)
@@ -1327,6 +1328,7 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
     NSMutableArray* photos = nil;
 
     if (ABPersonHasImageData(self.record)) {
+        CFIndex photoId = ABRecordGetRecordID(self.record);
         CFDataRef photoData = ABPersonCopyImageData(self.record);
         if (!photoData) {
             return nil;
@@ -1336,17 +1338,10 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
         // write to temp directory and store URI in photos array
         // get the temp directory path
         NSString* docsPath = [NSTemporaryDirectory()stringByStandardizingPath];
-        NSError* err = nil;
-        NSString* filePath = [NSString stringWithFormat:@"%@/photo_XXXXX", docsPath];
-        char template[filePath.length + 1];
-        strcpy(template, [filePath cStringUsingEncoding:NSASCIIStringEncoding]);
-        mkstemp(template);
-        filePath = [[NSFileManager defaultManager]
-            stringWithFileSystemRepresentation:template
-                                        length:strlen(template)];
+        NSString* filePath = [NSString stringWithFormat:@"%@/contact_photo_%ld", docsPath, photoId];
 
         // save file
-        if ([data writeToFile:filePath options:NSAtomicWrite error:&err]) {
+        if ([data writeToFile:filePath atomically:YES]) {
             photos = [NSMutableArray arrayWithCapacity:1];
             NSMutableDictionary* newDict = [NSMutableDictionary dictionaryWithCapacity:2];
             [newDict setObject:filePath forKey:kW3ContactFieldValue];
@@ -1380,6 +1375,10 @@ static NSDictionary* org_apache_cordova_contacts_defaultFields = nil;
         }
 
         for (id i in fieldsArray) {
+
+            // CB-7906 ignore NULL desired fields to avoid fatal exception
+            if ([i isKindOfClass:[NSNull class]]) continue;
+
             NSMutableArray* keys = nil;
             NSString* fieldStr = nil;
             if ([i isKindOfClass:[NSNumber class]]) {
