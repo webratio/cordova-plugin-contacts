@@ -143,7 +143,7 @@ function createStubs() {
         if (contact.name.givenName) {
             name = contact.name.givenName;
             if (contact.name.familyName) {
-                name = name + " " + contact.name.lastName;
+                name = name + " " + contact.name.familyName;
             }
         } else {
             if (contact.name.familyName) {
