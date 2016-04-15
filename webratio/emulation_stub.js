@@ -5,6 +5,7 @@ function createStubs() {
     var $ = window.top.jQuery;
 
     var fakeContact = {
+        "id": "24",
         "name": {
             "givenName": "",
             "familyName": ""
