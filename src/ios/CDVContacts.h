@@ -20,6 +20,7 @@
 #import <Foundation/Foundation.h>
 #import <AddressBook/ABAddressBook.h>
 #import <AddressBookUI/AddressBookUI.h>
+#import <AddressBook/ABPerson.h>
 #import <Cordova/CDVPlugin.h>
 #import "CDVContact.h"
 
@@ -30,6 +31,8 @@
 {
     ABAddressBookRef addressBook;
 }
+
+@property(strong) NSString* callbackId;
 
 /*
  * newContact - create a new contact via the GUI

@@ -35,7 +35,25 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.RawContacts;
+import android.provider.ContactsContract.Data;
+import android.provider.ContactsContract.CommonDataKinds.StructuredPostal;
+import android.provider.ContactsContract.CommonDataKinds.Phone;
+import android.provider.ContactsContract.CommonDataKinds.Email;
+import android.provider.ContactsContract.CommonDataKinds.StructuredName;
+import android.provider.ContactsContract.CommonDataKinds.Organization;
+
 import android.util.Log;
+import java.util.ArrayList;
+
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.ContentUris;
+import android.content.Context;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.ContactsContract;
+import android.provider.ContactsContract.PhoneLookup;
+import android.provider.ContactsContract.Intents;
 
 import java.lang.reflect.Method;
 
@@ -56,6 +74,7 @@ public class ContactManager extends CordovaPlugin {
     public static final int OPERATION_CANCELLED_ERROR = 6;
     public static final int PERMISSION_DENIED_ERROR = 20;
     private static final int CONTACT_PICKER_RESULT = 1000;
+    private static final int CONTACT_SAVE_RESULT = 2000;
     public static String [] permissions;
 
 
@@ -138,6 +157,16 @@ public class ContactManager extends CordovaPlugin {
                 getWritePermission(SAVE_REQ_CODE);
             }
         }
+        else if (action.equals("saveAndEdit")) {
+            if(PermissionHelper.hasPermission(this, WRITE))
+            {
+                saveAndEdit(executeArgs);
+            }
+            else
+            {
+                getWritePermission(SAVE_REQ_CODE);
+            }
+        }
         else if (action.equals("remove")) {
             if(PermissionHelper.hasPermission(this, WRITE))
             {
@@ -199,6 +228,231 @@ public class ContactManager extends CordovaPlugin {
         });
     }
 
+    private void saveAndEdit(JSONArray args) throws JSONException {
+        final JSONObject contact = args.getJSONObject(0);
+        final CordovaPlugin plugin = (CordovaPlugin) this;
+        Runnable worker = new Runnable() {
+            public void run() {
+                String contactId = "";
+                JSONObject editContact = null;
+                JSONObject name = null;
+                JSONArray addresses = null;
+                JSONArray emails = null;
+                JSONArray phoneNumbers = null;
+
+                ArrayList<ContentValues> data = new ArrayList<ContentValues>();
+
+                try {
+                    if (!contact.isNull("id")) {
+                        contactId = contact.getString("id");
+                    }
+                    if (!contact.isNull("name")) {
+                        name = contact.getJSONObject("name");
+                    }
+                    if (!contact.isNull("addresses")) {
+                        addresses = contact.getJSONArray("addresses");
+                    }
+                    if (!contact.isNull("emails")) {
+                        emails = contact.getJSONArray("emails");
+                    }
+                    if (!contact.isNull("phoneNumbers")) {
+                        phoneNumbers = contact.getJSONArray("phoneNumbers");
+                    }
+                } catch (JSONException e) {
+                    Log.e(LOG_TAG, "JSON fail.", e);
+                }
+
+                if (addresses != null) {
+                    for (int i = 0; i < addresses.length(); i++) {
+                        JSONObject currentAddress = null;
+                        try {
+                            currentAddress = addresses.getJSONObject(i);
+                        } catch (JSONException e) {
+                            Log.e(LOG_TAG, "JSON fail.", e);
+                        }
+
+                        ContentValues addressValues = new ContentValues();
+                        addressValues.put(Data.MIMETYPE, StructuredPostal.CONTENT_ITEM_TYPE);
+                        if ("home".equals(getJsonString(currentAddress, "type"))) {
+                            addressValues.put(StructuredPostal.TYPE, StructuredPostal.TYPE_HOME);
+                        } else if ("work".equals(getJsonString(currentAddress, "type"))) {
+                            addressValues.put(StructuredPostal.TYPE, StructuredPostal.TYPE_WORK);
+                        } else {
+                            addressValues.put(StructuredPostal.TYPE, StructuredPostal.TYPE_OTHER);
+                        }
+                        
+                        String formattedAddress = "";
+                        if (!currentAddress.isNull("streetAddress")) {
+                            formattedAddress = formattedAddress + getJsonString(currentAddress, "streetAddress");
+                            if (!currentAddress.isNull("locality") || !currentAddress.isNull("postalCode") || !currentAddress.isNull("country")) {
+                                formattedAddress = formattedAddress + ", ";
+                            }
+                        }
+                        if (!currentAddress.isNull("locality")) {
+                            formattedAddress = formattedAddress + getJsonString(currentAddress, "locality");
+                            if (!currentAddress.isNull("postalCode") || !currentAddress.isNull("country")) {
+                                formattedAddress = formattedAddress + ", ";
+                            }
+                        }
+                        if (!currentAddress.isNull("postalCode")) {
+                            formattedAddress = formattedAddress + getJsonString(currentAddress, "postalCode");
+                            if (!currentAddress.isNull("country")) {
+                                formattedAddress = formattedAddress + ", ";
+                            }
+                        }
+                        if (!currentAddress.isNull("country")) {
+                            formattedAddress = formattedAddress + getJsonString(currentAddress, "country");
+                        }
+
+                        addressValues.put(StructuredPostal.FORMATTED_ADDRESS, formattedAddress);
+                        addressValues.put(StructuredPostal.STREET, getJsonString(currentAddress, "streetAddress"));
+                        addressValues.put(StructuredPostal.CITY, getJsonString(currentAddress, "locality"));
+                        addressValues.put(StructuredPostal.REGION, getJsonString(currentAddress, "region"));
+                        addressValues.put(StructuredPostal.POSTCODE, getJsonString(currentAddress, "postalCode"));
+                        addressValues.put(StructuredPostal.COUNTRY, getJsonString(currentAddress, "country"));
+                        data.add(addressValues);
+                    }
+                }
+
+                if (phoneNumbers != null) {
+                    for (int i = 0; i < phoneNumbers.length(); i++) {
+                        JSONObject currentPhone = null;
+                        try {
+                            currentPhone = phoneNumbers.getJSONObject(i);
+                        } catch (JSONException e) {
+                            Log.e(LOG_TAG, "JSON fail.", e);
+                        }
+
+                        ContentValues phoneValues = new ContentValues();
+                        phoneValues.put(Data.MIMETYPE, Phone.CONTENT_ITEM_TYPE);
+                        if ("home".equals(getJsonString(currentPhone, "type"))) {
+                            phoneValues.put(Phone.TYPE, Phone.TYPE_HOME);
+                        } else if ("work".equals(getJsonString(currentPhone, "type"))) {
+                            phoneValues.put(Phone.TYPE, Phone.TYPE_WORK);
+                        } else if ("mobile".equals(getJsonString(currentPhone, "type"))) {
+                            phoneValues.put(Phone.TYPE, Phone.TYPE_MOBILE);
+                        } else if ("fax".equals(getJsonString(currentPhone, "type"))) {
+                            phoneValues.put(Phone.TYPE, Phone.TYPE_FAX_WORK);
+                        } else if ("main".equals(getJsonString(currentPhone, "type"))) {
+                            phoneValues.put(Phone.TYPE, Phone.TYPE_MAIN);
+                        } else {
+                            phoneValues.put(Phone.TYPE, Phone.TYPE_OTHER);
+                        }
+                        phoneValues.put(Phone.NUMBER, getJsonString(currentPhone, "value"));
+                        data.add(phoneValues);
+                    }
+                }
+
+                if (emails != null) {
+                    for (int i = 0; i < emails.length(); i++) {
+                        JSONObject currentEmail = null;
+                        try {
+                            currentEmail = emails.getJSONObject(i);
+                        } catch (JSONException e) {
+                            Log.e(LOG_TAG, "JSON fail.", e);
+                        }
+
+                        ContentValues emailValues = new ContentValues();
+                        emailValues.put(Data.MIMETYPE, Email.CONTENT_ITEM_TYPE);
+                        if ("home".equals(getJsonString(currentEmail, "type"))) {
+                            emailValues.put(Email.TYPE, Email.TYPE_HOME);
+                        } else if ("work".equals(getJsonString(currentEmail, "type"))) {
+                            emailValues.put(Email.TYPE, Email.TYPE_WORK);
+                        } else {
+                            emailValues.put(Email.TYPE, Email.TYPE_OTHER);
+                        }
+                        emailValues.put(Email.ADDRESS, getJsonString(currentEmail, "value"));
+                        data.add(emailValues);
+                    }
+                }
+
+                Intent intent = null;
+
+                if (!contactId.equals("")) {
+                    ContentResolver cr = plugin.cordova.getActivity().getContentResolver();
+                    Cursor cursor = cr.query(ContactsContract.Contacts.CONTENT_URI, null, "_ID = '" + contactId + "'", null, null);
+                    if (cursor.getCount() > 0) {
+                        Long contactIdLong = Long.parseLong(contactId);
+                        intent = new Intent(Intent.ACTION_EDIT);
+                        Uri contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactIdLong);
+                        intent.setData(contactUri);
+                        intent.putExtra("finishActivityOnSaveCompleted", true);
+                        if (name != null) {
+                            String displayedName = "";
+                            displayedName = getFormattedName(name);
+                            if (!"".equals(displayedName)) {
+                                intent.putExtra(Intents.Insert.NAME, displayedName);
+                            }
+                        }
+                        if (!data.isEmpty()) {
+                            intent.putParcelableArrayListExtra(ContactsContract.Intents.Insert.DATA, data);
+                        }
+                        intent.putParcelableArrayListExtra(ContactsContract.Intents.Insert.DATA, data);
+                    }
+                }
+                if (intent == null) {
+                    intent = new Intent(ContactsContract.Intents.Insert.ACTION, ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
+                    intent.setType(ContactsContract.RawContacts.CONTENT_TYPE);
+                    intent.putExtra("finishActivityOnSaveCompleted", true);
+                    if (name != null) {
+                        String displayedName = "";
+                        displayedName = getFormattedName(name);
+                        if (!"".equals(displayedName)) {
+                            intent.putExtra(Intents.Insert.NAME, displayedName);
+                        }
+                    }
+                    if (!data.isEmpty()) {
+                        intent.putParcelableArrayListExtra(ContactsContract.Intents.Insert.DATA, data);
+                    }
+                }
+                plugin.cordova.startActivityForResult(plugin, intent, CONTACT_SAVE_RESULT);
+            }
+        };
+        this.cordova.getThreadPool().execute(worker);
+    }
+
+    /**
+     * Convenience method to get a string from a JSON object. Saves a lot of try/catch writing. If the property is not found in the
+     * object null will be returned.
+     *
+     * @param obj
+     *            contact object to search
+     * @param property
+     *            to be looked up
+     * @return The value of the property
+     */
+    private static String getJsonString(JSONObject obj, String property) {
+        String value = null;
+        try {
+            if (obj != null) {
+                value = obj.getString(property);
+                if (value.equals("null")) {
+                    Log.d(LOG_TAG, property + " is string called 'null'");
+                    value = null;
+                }
+            }
+        } catch (JSONException e) {
+            Log.d(LOG_TAG, "Could not get = " + e.getMessage());
+        }
+        return value;
+    }
+
+    /**
+     * @param name
+     * @return The formatted name
+     */
+    private static String getFormattedName(JSONObject name) {
+        if (!name.isNull("givenName")) {
+            if (!name.isNull("familyName")) {
+                return getJsonString(name, "givenName") + " " + getJsonString(name, "familyName");
+            }
+        }
+        if (!name.isNull("familyName")) {
+            return getJsonString(name, "familyName") + " " + getJsonString(name, "familyName");
+        }
+        return "";
+    }
+    
     private void search(JSONArray args) throws JSONException
     {
         final JSONArray filter = args.getJSONArray(0);
@@ -262,6 +516,29 @@ public class ContactManager extends CordovaPlugin {
             }
 
             this.callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, UNKNOWN_ERROR));
+        } else if (requestCode == CONTACT_SAVE_RESULT) {
+
+            JSONObject saveResult = new JSONObject();
+
+            if (resultCode == Activity.RESULT_OK) {
+
+                Uri contactData = intent.getData();
+                Cursor c = this.cordova.getActivity().getContentResolver().query(contactData, null, null, null, null);
+                String id = "";
+                c.moveToLast();
+                id = c.getString(c.getColumnIndex(RawContacts._ID));
+                c.close();
+                try {
+                    saveResult.put("id", id);
+                    this.callbackContext.success(saveResult);
+                    return;
+                } catch (JSONException e) {
+                    Log.e(LOG_TAG, "JSON fail.", e);
+                }
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                callbackContext.error(OPERATION_CANCELLED_ERROR);
+                return;
+            }
         }
     }
 

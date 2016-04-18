@@ -23,7 +23,6 @@
 @implementation CDVContactsPicker
 
 @synthesize allowsEditing;
-@synthesize callbackId;
 @synthesize options;
 @synthesize pickedContactDictionary;
 
@@ -70,19 +69,22 @@
 
 - (void)newPersonViewController:(ABNewPersonViewController*)newPersonViewController didCompleteWithNewPerson:(ABRecordRef)person
 {
-    ABRecordID recordId = kABRecordInvalidID;
-    CDVNewContactsController* newCP = (CDVNewContactsController*)newPersonViewController;
-    NSString* callbackId = newCP.callbackId;
-
+    [self.commandDelegate evalJs:[NSString stringWithFormat:@"console.log('newPersonViewController');"]];
+    NSMutableDictionary *contact;
+    
     if (person != NULL) {
-        // return the contact id
-        recordId = ABRecordGetRecordID(person);
+        [self.commandDelegate evalJs:[NSString stringWithFormat:@"console.log('person not null');"]];
+        [self.commandDelegate evalJs:[NSString stringWithFormat:@"console.log('id: %@');", [NSNumber numberWithInt:ABRecordGetRecordID(person)]]];
+        [self.viewController dismissModalViewControllerAnimated:YES];
+        ABRecordID recordId = ABRecordGetRecordID(person);
+        contact = @{@"id" : [NSNumber numberWithInt:recordId]};
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:contact];
+        [self.commandDelegate sendPluginResult:result callbackId:self.callbackId];
+    } else {
+        [[newPersonViewController presentingViewController] dismissViewControllerAnimated:YES completion:nil];
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:OPERATION_CANCELLED_ERROR] ;
+        [self.commandDelegate sendPluginResult:result callbackId:self.callbackId];
     }
-
-    [[newPersonViewController presentingViewController] dismissViewControllerAnimated:YES completion:nil];
-
-    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:recordId];
-    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
 - (bool)existsValue:(NSDictionary*)dict val:(NSString*)expectedValue forKey:(NSString*)key
@@ -480,6 +482,48 @@
         }];
     }];     // end of  queue
 }
+
+- (void)saveAndEdit:(CDVInvokedUrlCommand*)command 
+{
+	CDVAddressBookHelper* abHelper = [[CDVAddressBookHelper alloc] init];
+    [abHelper createAddressBook: ^(ABAddressBookRef addrBook, CDVAddressBookAccessError* errorCode) {
+    if (addrBook == NULL) {
+        return;
+    }
+	
+	[self.commandDelegate evalJs:[NSString stringWithFormat:@"console.log('saveContact');"]];
+	//NSString* callbackId = command.callbackId;
+	self.callbackId = command.callbackId;
+    
+	NSDictionary* contactDict = [command argumentAtIndex:0];
+	//CDVContact* aContact = [[CDVContact alloc] init];
+	BOOL bUpdate = NO;
+    NSNumber* cId = [contactDict valueForKey:kW3ContactId];
+    CDVContact* aContact = nil;
+    ABRecordRef rec = nil;
+    if (cId && ![cId isKindOfClass:[NSNull class]]) {
+    rec = ABAddressBookGetPersonWithRecordID(addrBook, [cId intValue]);
+    	if (rec) {
+        	aContact = [[CDVContact alloc] initFromABRecord:rec];
+        	bUpdate = YES;
+        }
+    }
+    if (!aContact) {
+    	aContact = [[CDVContact alloc] init];
+    }
+	
+	[aContact setFromContactDict:contactDict asUpdate:bUpdate];
+  
+	[self.commandDelegate evalJs:[NSString stringWithFormat:@"console.log('w3');"]];
+	ABRecordRef newPerson = [aContact record];
+	
+	ABNewPersonViewController *newPersonController = [[ABNewPersonViewController alloc] init];
+	newPersonController.newPersonViewDelegate = self;
+	newPersonController.displayedPerson = newPerson; // Assume person is already defined.
+	UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:newPersonController];
+	[self.viewController presentViewController:navigationController animated:YES completion:nil];
+	}];
+    [self.commandDelegate evalJs:[NSString stringWithFormat:@"console.log('w3b');"]];}
 
 - (void)remove:(CDVInvokedUrlCommand*)command
 {

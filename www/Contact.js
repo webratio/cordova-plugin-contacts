@@ -174,4 +174,24 @@ Contact.prototype.save = function(successCB, errorCB) {
 };
 
 
+Contact.prototype.saveAndEdit = function(successCB, errorCB) {
+    argscheck.checkArgs('FFO', 'Contact.saveAndEdit', arguments);
+    var fail = errorCB && function(code) {
+        errorCB(new ContactError(code));
+    };
+    var success = function(result) {
+        if (result) {
+            if (successCB) {
+                successCB(result);
+            }
+        }
+        else {
+            // no Entry object returned
+            fail(ContactError.UNKNOWN_ERROR);
+        }
+    };
+    var dupContact = convertOut(utils.clone(this));
+    exec(success, fail, "Contacts", "saveAndEdit", [dupContact]);
+};
+
 module.exports = Contact;
