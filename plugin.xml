@@ -24,7 +24,7 @@
     xmlns:m3="http://schemas.microsoft.com/appx/2014/manifest"
     xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
     id="cordova-plugin-contacts"
-    version="2.0.1.1wr">
+    version="3.0.1">
 
     <name>Contacts</name>
     <description>Cordova Contacts Plugin</description>
@@ -32,12 +32,19 @@
     <keywords>cordova,contacts</keywords>
     <repo>https://github.com/webratio/phonegap-plugin-contacts.git</repo>
 
+    <engines>
+        <engine name="cordova-android" version=">=6.3.0" />
+    </engines>
+
     <js-module src="www/contacts.js" name="contacts">
         <clobbers target="navigator.contacts" />
     </js-module>
 
     <js-module src="www/Contact.js" name="Contact">
         <clobbers target="Contact" />
+    </js-module>
+
+    <js-module src="www/convertUtils.js" name="convertUtils">
     </js-module>
 
     <js-module src="www/ContactAddress.js" name="ContactAddress">
@@ -86,7 +93,6 @@
         <source-file src="src/android/ContactAccessorSdk5.java" target-dir="src/org/apache/cordova/contacts" />
         <source-file src="src/android/ContactManager.java" target-dir="src/org/apache/cordova/contacts" />
         <source-file src="src/android/ContactInfoDTO.java" target-dir="src/org/apache/cordova/contacts" />
-        <source-file src="src/android/PermissionHelper.java" target-dir="src/org/apache/cordova/contacts" />
     </platform>
 
     <!-- amazon-fireos -->
@@ -145,6 +151,13 @@
         <framework src="CoreGraphics.framework" />
     </platform>
 
+    <!-- Browser -->
+    <platform name="browser">
+        <js-module src="src/browser/ContactsProxy.js" name="ContactsProxy">
+            <merges target="navigator.contacts" />
+        </js-module>
+    </platform>
+
     <!-- blackberry10 -->
     <platform name="blackberry10">
         <config-file target="www/config.xml" parent="/widget">
@@ -165,8 +178,8 @@
         <source-file src="src/blackberry10/ContactOrganization.js" target-dir="Contacts"></source-file>
         <source-file src="src/blackberry10/ContactPhoto.js" target-dir="Contacts"></source-file>
         <source-file src="src/blackberry10/contactUtils.js" target-dir="Contacts"></source-file>
-        <dependency id="com.blackberry.utils" />
-        <dependency id="com.blackberry.pim.lib" />
+        <dependency id="cordova-plugin-bb-contacts" />
+        <dependency id="cordova-plugin-bb-pimlib" />
     </platform>
 
 
@@ -203,14 +216,14 @@
     <!-- Windows 8 -->
     <platform name="windows8">
         <js-module src="src/windows8/ContactProxy.js" name="ContactProxy">
-            <merges target="" />
+            <runs />
         </js-module>
     </platform>
 
     <!-- Windows -->
     <platform name="windows">
         <js-module src="src/windows/ContactProxy.js" name="ContactProxy">
-            <merges target="" />
+            <runs />
         </js-module>
         <config-file target="package.phone.appxmanifest" parent="/Package/Capabilities">
             <m3:Capability Name="contacts" />

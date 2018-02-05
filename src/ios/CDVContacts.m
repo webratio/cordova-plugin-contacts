@@ -255,18 +255,17 @@
         CFRelease(addrBook);
     }
     
-    CDVPluginResult* result = nil;
     NSNumber* recordId = picker.pickedContactDictionary[kW3ContactId];
     
-    if ([recordId isEqualToNumber:[NSNumber numberWithInt:kABRecordInvalidID]]) {
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:OPERATION_CANCELLED_ERROR] ;
-    } else {
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:picker.pickedContactDictionary];
-    }
-    
-    [self.commandDelegate sendPluginResult:result callbackId:picker.callbackId];
-
-    [[peoplePicker presentingViewController] dismissViewControllerAnimated:YES completion:nil];
+    [[peoplePicker presentingViewController] dismissViewControllerAnimated:YES completion:^{
+        CDVPluginResult* result = nil;
+        if ([recordId isEqualToNumber:[NSNumber numberWithInt:kABRecordInvalidID]]) {
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:OPERATION_CANCELLED_ERROR] ;
+        } else {
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:picker.pickedContactDictionary];
+        }
+        [self.commandDelegate sendPluginResult:result callbackId:picker.callbackId];
+    }];
 }
 
 // Called after a person has been selected by the user.
@@ -291,10 +290,10 @@
         NSDictionary* returnFields = [[CDVContact class] calcReturnFields:fields];
         picker.pickedContactDictionary = [pickedContact toDictionary:returnFields];
         
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:picker.pickedContactDictionary];
-        [self.commandDelegate sendPluginResult:result callbackId:picker.callbackId];
-        
-        [[picker presentingViewController] dismissViewControllerAnimated:YES completion:nil];
+        [[picker presentingViewController] dismissViewControllerAnimated:YES completion:^{
+            CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:picker.pickedContactDictionary];
+            [self.commandDelegate sendPluginResult:result callbackId:picker.callbackId];
+        }];
     }
 }
 
@@ -332,7 +331,9 @@
             NSArray* desiredFields = nil;
             if (![findOptions isKindOfClass:[NSNull class]]) {
                 id value = nil;
-                filter = (NSString*)[findOptions objectForKey:@"filter"];
+                id filterValue = [findOptions objectForKey:@"filter"];
+                BOOL filterValueIsNumber = [filterValue isKindOfClass:[NSNumber class]];
+                filter = filterValueIsNumber ? [filterValue stringValue] : (NSString *) filterValue;
                 value = [findOptions objectForKey:@"multiple"];
                 if ([value isKindOfClass:[NSNumber class]]) {
                     // multiple is a boolean that will come through as an NSNumber
