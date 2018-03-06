@@ -145,7 +145,8 @@ Contact.prototype.saveAndEdit = function(successCB, errorCB) {
     var success = function(result) {
         if (result) {
             if (successCB) {
-                successCB(result);
+                var fullContact = require('./contacts').create(result);
+                successCB(convertUtils.toCordovaFormat(fullContact));
             }
         }
         else {
@@ -153,7 +154,7 @@ Contact.prototype.saveAndEdit = function(successCB, errorCB) {
             fail(ContactError.UNKNOWN_ERROR);
         }
     };
-    var dupContact = convertOut(utils.clone(this));
+    var dupContact = convertUtils.toNativeFormat(utils.clone(this));
     exec(success, fail, "Contacts", "saveAndEdit", [dupContact]);
 };
 
