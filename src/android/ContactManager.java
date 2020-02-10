@@ -85,6 +85,7 @@ public class ContactManager extends CordovaPlugin {
     public static final int SAVE_REQ_CODE = 1;
     public static final int REMOVE_REQ_CODE = 2;
     public static final int PICK_REQ_CODE = 3;
+    public static final int SAVE_AND_EDIT_CODE = 4;
 
     public static final String READ = Manifest.permission.READ_CONTACTS;
     public static final String WRITE = Manifest.permission.WRITE_CONTACTS;
@@ -150,7 +151,7 @@ public class ContactManager extends CordovaPlugin {
             }
         }
         else if (action.equals("save")) {
-            if(PermissionHelper.hasPermission(this, WRITE))
+            if(PermissionHelper.hasPermission(this, WRITE) && PermissionHelper.hasPermission(this, READ))
             {
                 save(executeArgs);
             }
@@ -160,17 +161,17 @@ public class ContactManager extends CordovaPlugin {
             }
         }
         else if (action.equals("saveAndEdit")) {
-            if(PermissionHelper.hasPermission(this, WRITE))
+            if(PermissionHelper.hasPermission(this, WRITE) && PermissionHelper.hasPermission(this, READ))
             {
                 saveAndEdit(executeArgs);
             }
             else
             {
-                getWritePermission(SAVE_REQ_CODE);
+                getWritePermission(SAVE_AND_EDIT_CODE);
             }
         }
         else if (action.equals("remove")) {
-            if(PermissionHelper.hasPermission(this, WRITE))
+            if(PermissionHelper.hasPermission(this, WRITE) && PermissionHelper.hasPermission(this, READ))
             {
                 remove(executeArgs);
             }
@@ -561,10 +562,25 @@ public class ContactManager extends CordovaPlugin {
                 search(executeArgs);
                 break;
             case SAVE_REQ_CODE:
-                save(executeArgs);
+                if (!PermissionHelper.hasPermission(this, READ)) {
+                    getReadPermission(SAVE_REQ_CODE);
+                } else {
+                    save(executeArgs);
+                }
+                break;
+            case SAVE_AND_EDIT_CODE:
+                if (!PermissionHelper.hasPermission(this, READ)) {
+                    getReadPermission(SAVE_AND_EDIT_CODE);
+                } else {
+                    saveAndEdit(executeArgs);
+                }
                 break;
             case REMOVE_REQ_CODE:
-                remove(executeArgs);
+                if (!PermissionHelper.hasPermission(this, READ)) {
+                    getReadPermission(REMOVE_REQ_CODE);
+                } else {
+                    remove(executeArgs);
+                }
                 break;
             case PICK_REQ_CODE:
                 pickContactAsync();
